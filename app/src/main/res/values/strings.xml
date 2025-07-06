@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EliNextTest</string>
+    <string name="button_reload_all">Reload All</string>
 </resources>

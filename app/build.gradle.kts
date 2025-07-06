@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -35,6 +35,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -62,4 +66,5 @@ dependencies {
 
     // RecyclerView
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.swiperefreshlayout)
 }
