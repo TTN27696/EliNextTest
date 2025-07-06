@@ -9,8 +9,11 @@ import com.example.elinexttest.domain.repository.ImageRepository
 import com.example.elinexttest.presentation.GalleryActionState
 import com.example.elinexttest.utils.getImageURL
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -26,18 +29,22 @@ class MainViewModel @Inject constructor(
     fun reloadAll() {
         viewModelScope.launch {
             _images.value = imageRepository.getImages(140)
+            delay(500.milliseconds)
             _stateGallery.value = GalleryActionState.RELOAD
         }
     }
 
     fun addImage() {
-        val current = _images.value ?: emptyList()
-        val lastId = current.lastOrNull()?.id ?: 0
-        val newImage = ImageEntities(
-            id = lastId + 1,
-            url = getImageURL()
-        )
-        _images.value = current + newImage
-        _stateGallery.value = GalleryActionState.ADD_NEW
+        viewModelScope.launch {
+            val current = _images.value ?: emptyList()
+            val lastId = current.lastOrNull()?.id ?: 0
+            val newImage = ImageEntities(
+                id = lastId + 1,
+                url = getImageURL()
+            )
+            _images.value = current + newImage
+            delay(500.milliseconds)
+            _stateGallery.value = GalleryActionState.ADD_NEW
+        }
     }
 }
