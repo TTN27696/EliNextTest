@@ -8,7 +8,6 @@ import com.example.elinexttest.domain.entities.ImageEntities
 import com.example.elinexttest.domain.repository.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +29,7 @@ class MainViewModel @Inject constructor(
         val lastId = current.lastOrNull()?.id ?: 0
         val newImage = ImageEntities(
             id = lastId + 1,
-            url = "http://loremflickr.com/200/200/?random=${UUID.randomUUID()}"
+            url = "https://loremflickr.com/200/200/"
         )
         _images.value = current + newImage
     }
