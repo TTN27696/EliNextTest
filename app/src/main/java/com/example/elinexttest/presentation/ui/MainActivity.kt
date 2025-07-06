@@ -1,6 +1,7 @@
 package com.example.elinexttest.presentation.ui
 
 import android.os.Bundle
+import android.view.ViewTreeObserver
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -43,13 +44,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvGallery.layoutManager =
-            GridLayoutManager(this, 7, RecyclerView.HORIZONTAL, false)
-        binding.rvGallery.adapter = adapter
-        PagerSnapHelper().attachToRecyclerView(binding.rvGallery)
+        with(binding) {
+            rvGallery.layoutManager =
+                GridLayoutManager(this@MainActivity, 10, RecyclerView.HORIZONTAL, false)
 
-        val spacingPx = 2.dpToPx(this)
-        binding.rvGallery.addItemDecoration(GridSpacingItemDecoration(7, spacingPx))
+            rvGallery.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    rvGallery.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    val height = rvGallery.height
+                    adapter.setAvailableHeight(height)
+                }
+            })
+
+
+            binding.rvGallery.adapter = adapter
+            PagerSnapHelper().attachToRecyclerView(binding.rvGallery)
+
+            val spacingPx = 2.dpToPx(this@MainActivity)
+            binding.rvGallery.addItemDecoration(GridSpacingItemDecoration(7, spacingPx))
+        }
+
     }
 
     private fun setupObservers() {

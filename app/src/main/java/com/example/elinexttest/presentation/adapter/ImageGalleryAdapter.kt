@@ -14,6 +14,13 @@ import com.example.elinexttest.utils.dpToPx
 class ImageGalleryAdapter :
     ListAdapter<ImageEntities, ImageGalleryAdapter.ImageViewHolder>(ImageDiffCallback()) {
 
+    private var availableHeight: Int = 0
+
+    fun setAvailableHeight(height: Int) {
+        availableHeight = height
+        notifyDataSetChanged()
+    }
+
     inner class ImageViewHolder(private val binding: ItemGalleryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val progressDrawable: CircularProgressDrawable =
@@ -26,7 +33,6 @@ class ImageGalleryAdapter :
         fun bind(item: ImageEntities) {
             with(binding) {
                 val screenWidth = itemView.resources.displayMetrics.widthPixels
-                val screenHeight = itemView.resources.displayMetrics.heightPixels
 
                 val columns = 7
                 val rows = 10
@@ -36,7 +42,7 @@ class ImageGalleryAdapter :
                 val totalSpacingY = spacingPx * (rows + 1)
 
                 val itemWidth = (screenWidth - totalSpacingX) / columns
-                val itemHeight = (screenHeight - totalSpacingY) / rows
+                val itemHeight = (availableHeight - totalSpacingY) / rows
 
                 itemView.layoutParams = itemView.layoutParams.apply {
                     width = itemWidth
