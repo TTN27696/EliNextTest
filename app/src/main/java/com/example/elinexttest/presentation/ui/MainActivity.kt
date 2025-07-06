@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elinexttest.R
 import com.example.elinexttest.databinding.ActivityMainBinding
+import com.example.elinexttest.presentation.GalleryActionState
 import com.example.elinexttest.presentation.adapter.GridSpacingItemDecoration
 import com.example.elinexttest.presentation.adapter.ImageGalleryAdapter
 import com.example.elinexttest.presentation.viewModel.MainViewModel
@@ -69,6 +70,20 @@ class MainActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.images.observe(this) { newList ->
             adapter.submitList(newList.toList())
+        }
+
+        viewModel.stateGallery.observe(this) { state ->
+            when (state) {
+                GalleryActionState.ADD_NEW -> {
+                    binding.rvGallery.smoothScrollToPosition(adapter.itemCount - 1)
+                }
+                GalleryActionState.RELOAD -> {
+                    binding.rvGallery.smoothScrollToPosition(0)
+                }
+
+                else -> {}
+            }
+
         }
     }
 

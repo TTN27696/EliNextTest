@@ -2,7 +2,6 @@ package com.example.elinexttest.utils
 
 import android.content.Context
 import android.util.TypedValue
-import java.util.UUID
 
 fun Int.dpToPx(context: Context): Int {
     return TypedValue.applyDimension(
@@ -12,4 +11,4 @@ fun Int.dpToPx(context: Context): Int {
     ).toInt()
 }
 
-fun getImageURL() = "https://picsum.photos/200/200?random=${UUID.randomUUID()}"
+fun getImageURL() = "https://picsum.photos/200/200?random=${(1..10000).random()}"

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.elinexttest.R
 import com.example.elinexttest.databinding.ItemGalleryBinding
@@ -53,9 +54,8 @@ class ImageGalleryAdapter :
                 Glide.with(itemImageGallery)
                     .load(item.url)
                     .placeholder(progressDrawable)
-                    .transform(RoundedCorners(7.dpToPx(root.context)))
+                    .transform(CenterCrop(), RoundedCorners(7.dpToPx(root.context)))
                     .error(R.drawable.ic_launcher_background)
-
                     .into(itemImageGallery)
             }
         }
