@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.elinexttest.domain.entities.ImageEntities
 import com.example.elinexttest.domain.repository.ImageRepository
+import com.example.elinexttest.utils.getImageURL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class MainViewModel @Inject constructor(
         val lastId = current.lastOrNull()?.id ?: 0
         val newImage = ImageEntities(
             id = lastId + 1,
-            url = "https://loremflickr.com/200/200/"
+            url = getImageURL()
         )
         _images.value = current + newImage
     }

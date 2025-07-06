@@ -55,6 +55,7 @@ class ImageGalleryAdapter :
                     .placeholder(progressDrawable)
                     .transform(RoundedCorners(7.dpToPx(root.context)))
                     .error(R.drawable.ic_launcher_background)
+
                     .into(itemImageGallery)
             }
         }
