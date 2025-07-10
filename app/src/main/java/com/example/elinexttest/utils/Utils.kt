@@ -11,4 +11,4 @@ fun Int.dpToPx(context: Context): Int {
     ).toInt()
 }
 
-fun getImageURL() = "https://picsum.photos/200/200?random=${(1..10000).random()}"
+fun getImageURL() = "https://picsum.photos/200/200?random=${(1..1000).random()}"
