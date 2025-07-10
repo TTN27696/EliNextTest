@@ -1,6 +1,10 @@
 package com.example.elinexttest.presentation.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -8,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elinexttest.R
 import com.example.elinexttest.databinding.ActivityMainBinding
@@ -18,6 +21,7 @@ import com.example.elinexttest.presentation.adapter.ImageGalleryAdapter
 import com.example.elinexttest.presentation.viewModel.MainViewModel
 import com.example.elinexttest.utils.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -25,6 +29,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private val adapter = ImageGalleryAdapter()
+    private var currentPage = 0
+    private val itemsPerPage = 70
+    private var scrolledEnough = false
+    private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         setupObservers()
         setupButtons()
+        setupSwipeGesture()
 
         viewModel.reloadAll()
     }
@@ -59,7 +68,6 @@ class MainActivity : AppCompatActivity() {
 
 
             binding.rvGallery.adapter = adapter
-            PagerSnapHelper().attachToRecyclerView(binding.rvGallery)
 
             val spacingPx = 2.dpToPx(this@MainActivity)
             binding.rvGallery.addItemDecoration(GridSpacingItemDecoration(7, spacingPx))
@@ -90,5 +98,64 @@ class MainActivity : AppCompatActivity() {
     private fun setupButtons() {
         binding.buttonReloadAll.setOnClickListener { viewModel.reloadAll() }
         binding.imageAdd.setOnClickListener { viewModel.addImage() }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupSwipeGesture() {
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            private val SWIPE_THRESHOLD = 100
+
+            override fun onDown(e: MotionEvent): Boolean {
+                scrolledEnough = false
+                return true
+            }
+
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                if (e1 == null) return false
+                val diffX = e2.x - e1.x
+
+                if (!scrolledEnough && abs(diffX) > SWIPE_THRESHOLD) {
+                    scrolledEnough = true
+                    if (diffX < 0) {
+                        goToNextPage()
+                    } else {
+                        goToPreviousPage()
+                    }
+                    return true
+                }
+                return false
+            }
+        })
+
+        binding.rvGallery.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+    }
+
+    private fun goToNextPage() {
+        val itemCount = adapter.itemCount
+        val remain = itemCount % itemsPerPage
+        val divider = itemCount / itemsPerPage
+        val maxPage = if (remain == 0) divider - 1 else divider
+
+        if (currentPage < maxPage) {
+            currentPage++
+            val targetPos = currentPage * itemsPerPage * 2 - 1
+            binding.rvGallery.smoothScrollToPosition(targetPos)
+        }
+    }
+
+    private fun goToPreviousPage() {
+        if (currentPage > 0) {
+            currentPage--
+            val targetPos = currentPage * itemsPerPage
+            binding.rvGallery.smoothScrollToPosition(targetPos)
+        }
     }
 }
