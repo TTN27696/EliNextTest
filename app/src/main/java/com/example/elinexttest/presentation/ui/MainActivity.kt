@@ -2,7 +2,6 @@ package com.example.elinexttest.presentation.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewTreeObserver
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             binding.rvGallery.adapter = adapter
 
             val spacingPx = 2.dpToPx(this@MainActivity)
-            binding.rvGallery.addItemDecoration(GridSpacingItemDecoration(7, spacingPx))
+            binding.rvGallery.addItemDecoration(GridSpacingItemDecoration(10, spacingPx))
         }
 
     }

@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.elinexttest.R
 import com.example.elinexttest.databinding.ItemGalleryBinding
 import com.example.elinexttest.domain.entities.ImageEntities
@@ -53,7 +54,14 @@ class ImageGalleryAdapter :
 
                 Glide.with(itemImageGallery)
                     .load(item.url)
-                    .placeholder(progressDrawable)
+                    .thumbnail(
+                        Glide.with(itemImageGallery)
+                            .load(item.url)
+                            .sizeMultiplier(0.1f)
+                            .transform(CenterCrop(), RoundedCorners(7.dpToPx(root.context)))
+                    )
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.placeholder_rounded)
                     .transform(CenterCrop(), RoundedCorners(7.dpToPx(root.context)))
                     .error(R.drawable.ic_launcher_background)
                     .into(itemImageGallery)
