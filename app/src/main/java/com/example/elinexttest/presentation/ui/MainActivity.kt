@@ -84,9 +84,17 @@ class MainActivity : AppCompatActivity() {
             when (state) {
                 GalleryActionState.ADD_NEW -> {
                     binding.rvGallery.smoothScrollToPosition(adapter.itemCount - 1)
+                    val itemCount = adapter.itemCount
+                    val remain = itemCount % itemsPerPage
+                    val divider = itemCount / itemsPerPage
+                    val maxPage = if (remain == 0) divider - 1 else divider
+                    if (currentPage < maxPage) {
+                        currentPage = maxPage
+                    }
                 }
                 GalleryActionState.RELOAD -> {
                     binding.rvGallery.smoothScrollToPosition(0)
+                    currentPage = 0
                 }
 
                 else -> {}
