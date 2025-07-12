@@ -1,6 +1,7 @@
 package com.example.elinexttest.presentation.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.recyclerview.widget.ListAdapter
@@ -52,6 +53,8 @@ class ImageGalleryAdapter :
                     width = itemWidth
                     height = itemHeight
                 }
+
+                itemImageGallery.visibility = if (item.url.isEmpty()) View.INVISIBLE else View.VISIBLE
 
                 if (itemImageGallery.width > 0 && itemImageGallery.height > 0) {
                     Glide.with(itemImageGallery)

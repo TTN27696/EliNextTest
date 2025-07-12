@@ -13,12 +13,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
+
+    private var realLastId: Int = 0
+    private var realImagesSize : Int = 0
 
     private val _images = MutableLiveData<List<ImageEntities>>()
     val images: LiveData<List<ImageEntities>> = _images
@@ -29,6 +31,7 @@ class MainViewModel @Inject constructor(
     fun reloadAll() {
         viewModelScope.launch {
             _images.value = imageRepository.getImages(140)
+            realImagesSize = _images.value?.size ?: 0
             delay(500.milliseconds)
             _stateGallery.value = GalleryActionState.RELOAD
         }
@@ -36,15 +39,36 @@ class MainViewModel @Inject constructor(
 
     fun addImage() {
         viewModelScope.launch {
-            val current = _images.value ?: emptyList()
-            val lastId = current.lastOrNull()?.id ?: 0
-            val newImage = ImageEntities(
-                id = lastId + 1,
-                url = getImageURL()
-            )
-            _images.value = current + newImage
-            delay(500.milliseconds)
-            _stateGallery.value = GalleryActionState.ADD_NEW
+            val current = _images.value?.toMutableList() ?: mutableListOf()
+            if (realImagesSize % 70 == 0) {
+                realLastId = current.lastOrNull()?.id ?: 0
+                val newImage = ImageEntities(
+                    id = realLastId + 1,
+                    url = getImageURL()
+                )
+                val emptyImages = List(69) {
+                    ImageEntities(
+                        id = realLastId + it + 2,
+                        url = ""
+                    )
+                }
+                _images.value = current + newImage + emptyImages
+                realImagesSize++
+                realLastId++
+                delay(500.milliseconds)
+                _stateGallery.value = GalleryActionState.ADD_NEW
+            } else {
+                realImagesSize++
+                realLastId++
+                val oldItem = current.getOrNull(realLastId)
+                val updateItem = oldItem?.copy(url = getImageURL())
+                updateItem?.let {
+                    current[realLastId] = it
+                }
+                _images.value = current.toList()
+                delay(500.milliseconds)
+                _stateGallery.value = GalleryActionState.ADD_NEW
+            }
         }
     }
 }
